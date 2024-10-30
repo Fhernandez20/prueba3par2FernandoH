@@ -17,6 +17,9 @@ public class TableroXiangqi extends JFrame {
 
     private JButton[][] botones;
     private Ficha[][] fichas;
+    private Players loggedUser;
+    private Players opponent;
+    private Partidas partidas;
 
     // Reyes
     Rey reyNegro = new Rey("Negro", 0, 4);
@@ -66,17 +69,62 @@ public class TableroXiangqi extends JFrame {
     Canon canonRojo2 = new Canon("Rojo", 8, 7);
     Canon canonNegro1 = new Canon("Negro", 2, 1);
     Canon canonNegro2 = new Canon("Negro", 2, 7);
-
-    public TableroXiangqi() {
-        this.botones = new JButton[11][9];
-        this.fichas = new Ficha[11][9];
+    
+    
+    public TableroXiangqi(Players loggedUser, Players selectedOpponent) {
+        this.partidas = new Partidas();
+        this.loggedUser= loggedUser;
+        this.opponent = selectedOpponent;
         
-        setLayout(new BorderLayout());
 
-        // Panel principal del tablero
-        JPanel tableroPanel = new JPanel(new GridLayout(11, 9));
-        inicializarFichas();
+        try {
+            loggedUser.setColor("Rojo");
+            opponent.setColor("Negro");
+           
 
+            this.botones = new JButton[11][9];
+            this.fichas = new Ficha[11][9];
+
+            setLayout(new BorderLayout());
+
+            JPanel tableroPanel = new JPanel(new GridLayout(11, 9));
+            inicializarFichas();
+
+            crearBotonesTablero(tableroPanel);
+
+            JPanel panelBoton = new JPanel();
+            JButton btnRetirarse = new JButton("Retirarse");
+            btnRetirarse.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String colorRendido = turnoActual;
+                    rendirse(colorRendido);
+                }
+            });
+            panelBoton.add(btnRetirarse);
+
+            turnoLabel = new JLabel("Turno: " + turnoActual, SwingConstants.CENTER);
+            turnoLabel.setFont(new Font("Arial", Font.BOLD, 16));
+
+            JPanel panelLateral = new JPanel();
+            panelLateral.setLayout(new BorderLayout());
+            panelLateral.setPreferredSize(new Dimension(150, getHeight()));
+            panelLateral.add(turnoLabel, BorderLayout.NORTH);
+
+            add(tableroPanel, BorderLayout.CENTER);
+            add(panelLateral, BorderLayout.EAST);
+            add(panelBoton, BorderLayout.SOUTH);
+
+            pack();
+            setSize(800, 650);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al inicializar el tablero: " + e.getMessage());
+        }
+    }
+
+    private final void crearBotonesTablero(JPanel tableroPanel) {
         for (int fila = 0; fila < 11; fila++) {
             for (int columna = 0; columna < 9; columna++) {
                 final int x = fila;
@@ -96,7 +144,7 @@ public class TableroXiangqi extends JFrame {
                 }
 
                 if (fichas[fila][columna] != null) {
-                    botones[fila][columna].setText(fichas[fila][columna].getClass().getSimpleName());
+                    botones[fila][columna].setIcon(fichas[fila][columna].obtenerIcono());
                 }
 
                 botones[fila][columna].addActionListener(new ActionListener() {
@@ -108,26 +156,6 @@ public class TableroXiangqi extends JFrame {
                 tableroPanel.add(botones[fila][columna]);
             }
         }
-
-        // Crear el JLabel para mostrar el turno
-        turnoLabel = new JLabel("Turno: " + turnoActual, SwingConstants.CENTER);
-        turnoLabel.setFont(new Font("Arial", Font.BOLD, 16));
-
-        // Crear un panel lateral para colocar el JLabel y otros componentes adicionales
-        JPanel panelLateral = new JPanel();
-        panelLateral.setLayout(new BorderLayout());
-        panelLateral.setPreferredSize(new Dimension(150, getHeight())); // Ajusta el ancho del panel lateral
-        panelLateral.add(turnoLabel, BorderLayout.NORTH); // Posiciona el JLabel en la parte superior del panel
-
-        // Agregar el tablero y el panel lateral al JFrame
-        add(tableroPanel, BorderLayout.CENTER);
-        add(panelLateral, BorderLayout.EAST);
-
-        // Configuraciones del JFrame
-        pack();
-        setSize(800, 650); // Ajustar el tamaño para que el tablero y el panel lateral se vean correctamente
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
     }
 
     private void inicializarFichas() {
@@ -175,43 +203,51 @@ public class TableroXiangqi extends JFrame {
         fichas[10][7] = caballoRojo2;
         fichas[0][1] = caballoNegro1;
         fichas[0][7] = caballoNegro2;
+        
     }
 
     private Ficha fichaSeleccionada = null;
 
     private void manejarClickBoton(int x, int y) {
-        if (fichaSeleccionada == null) {
-            fichaSeleccionada = fichas[x][y];
-            if (fichaSeleccionada != null) {
-                if (!fichaSeleccionada.getColor().equals(turnoActual)) {
-                    JOptionPane.showMessageDialog(this, "No es tu turno. Es el turno del jugador " + turnoActual);
-                    fichaSeleccionada = null;
-                    return;
-                }
-                System.out.println("Seleccionaste la ficha: " + fichaSeleccionada.getClass().getSimpleName());
-            }
-        } else {
-            if (fichaSeleccionada.movimientoValido(x,y ,fichas)) {
-                if (fichas[x][y] == null || !fichas[x][y].getColor().equals(fichaSeleccionada.getColor())) {
-
-                    fichas[x][y] = fichaSeleccionada;
-                    fichas[fichaSeleccionada.getFila()][fichaSeleccionada.getColumna()] = null;
-                    fichaSeleccionada.setFila(x);
-                    fichaSeleccionada.setColumna(y);
-                    JOptionPane.showMessageDialog(this, "Moviste la ficha a: " + x + ", " + y);
-                    actualizarBotones();
-                    turnoActual = turnoActual.equals("Rojo") ? "Negro" : "Rojo";
-                    turnoLabel.setText("Turno: " + turnoActual); 
-
-
-                } else {
-                    JOptionPane.showMessageDialog(this, "Movimiento inválido: Ya hay una ficha de tu color en esa posición.");
-
+        try {
+            if (fichaSeleccionada == null) {
+                fichaSeleccionada = fichas[x][y];
+                if (fichaSeleccionada != null) {
+                    if (!fichaSeleccionada.getColor().equals(turnoActual)) {
+                        JOptionPane.showMessageDialog(this, "No es tu turno. Es el turno del jugador " + turnoActual);
+                        fichaSeleccionada = null;
+                        return;
+                    }
+                    System.out.println("Seleccionaste la ficha: " + fichaSeleccionada.getClass().getSimpleName());
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Movimiento inválido");
+                if (fichaSeleccionada.movimientoValido(x, y, fichas)) {
+                    if (fichas[x][y] == null || !fichas[x][y].getColor().equals(fichaSeleccionada.getColor())) {
+                        if (fichas[x][y] != null && fichas[x][y] instanceof Rey) {
+                            String colorGanador = turnoActual;
+                            JOptionPane.showMessageDialog(this, "¡El rey ha sido capturado! Fin del juego. Ganador: " + colorGanador);
+
+                            finalizarJuego(colorGanador);
+                            return;
+                        }
+                        fichas[x][y] = fichaSeleccionada;
+                        fichas[fichaSeleccionada.getFila()][fichaSeleccionada.getColumna()] = null;
+                        fichaSeleccionada.setFila(x);
+                        fichaSeleccionada.setColumna(y);
+                        JOptionPane.showMessageDialog(this, "Moviste la ficha a: " + x + ", " + y);
+                        actualizarBotones(botones, fichas);
+                        turnoActual = turnoActual.equals("Rojo") ? "Negro" : "Rojo";
+                        turnoLabel.setText("Turno: " + turnoActual);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Movimiento inválido: Ya hay una ficha de tu color en esa posición.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Movimiento inválido");
+                }
+                fichaSeleccionada = null;
             }
-            fichaSeleccionada = null;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al manejar el clic: " + e.getMessage());
         }
     }
 
@@ -219,20 +255,54 @@ public class TableroXiangqi extends JFrame {
         return (fila >= 0 && fila <= 2 && columna >= 3 && columna <= 5) || (fila >= 8 && fila <= 10 && columna >= 3 && columna <= 5);
     }
 
-    private void actualizarBotones() {
+    private void actualizarBotones(JButton[][] botones, Ficha[][] tablero) {
         for (int i = 0; i < 11; i++) {
             for (int j = 0; j < 9; j++) {
                 if (fichas[i][j] != null) {
-                    botones[i][j].setText(fichas[i][j].getClass().getSimpleName());
+                    botones[i][j].setIcon(fichas[i][j].obtenerIcono());
                 } else {
-                    botones[i][j].setText("");
+                    botones[i][j].setIcon(null);
                 }
             }
         }
+
     }
 
     private boolean esRio(int fila, int columna) {
         return fila == 5;
+    }
+
+    private void rendirse(String colorRendido) {
+        try {
+
+            String colorGanador = colorRendido.equals("Rojo") ? "Negro" : "Rojo";
+            JOptionPane.showMessageDialog(this, "El jugador " + colorRendido + " se ha rendido. Ganador: " + colorGanador);
+            finalizarJuego(colorGanador);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al procesar la rendición: " + e.getMessage());
+        }
+    }
+
+    private void finalizarJuego(String ganador) {
+        try {
+            incrementarPuntos(ganador);
+            Partidas nuevaPartida = new Partidas();
+            nuevaPartida.registerGame(loggedUser,opponent);
+            panelprincipal pp = new panelprincipal();
+
+            pp.setVisible(true);
+            this.dispose();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al finalizar el juego: " + e.getMessage());
+        }
+    }
+
+    private void incrementarPuntos(String ganadorColor) {
+        if (ganadorColor.equals("Rojo") && loggedUser.getColor().equals("Rojo") || ganadorColor.equals("Negro") && loggedUser.getColor().equals("Negro")) {
+            loggedUser.incrementWins();
+        } else {
+            opponent.incrementWins();
+        }
     }
 
     /**

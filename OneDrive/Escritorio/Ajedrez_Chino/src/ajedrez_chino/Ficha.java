@@ -4,6 +4,8 @@
  */
 package ajedrez_chino;
 
+import javax.swing.ImageIcon;
+
 
 /**
  *
@@ -13,11 +15,15 @@ public abstract class Ficha {
     
     protected String color; 
     protected int fila,columna;
+    protected ImageIcon icono; 
+
 
    public Ficha(String color, int fila, int columna) { 
         this.color = color;
         this.fila = fila; 
         this.columna = columna; 
+        this.icono = obtenerIcono();
+
     }
 
     public String getColor() {
@@ -40,12 +46,18 @@ public abstract class Ficha {
         this.columna = nuevaColumna;
     }
 
-
+ 
     
     public void setPosicion(int fila, int columna) { 
         this.fila = fila; 
         this.columna = columna; 
     }
+    
+    public ImageIcon obtenerIcono(){
+        return icono;
+    }
+    
+
 
     public abstract boolean movimientoValido(int nuevaFila, int nuevaColumna,Ficha[][]tablero); 
 }

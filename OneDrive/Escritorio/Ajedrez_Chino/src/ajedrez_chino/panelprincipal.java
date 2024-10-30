@@ -4,8 +4,11 @@
  */
 package ajedrez_chino;
 
+import static ajedrez_chino.Players.getAllPlayers;
 import java.awt.*;
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,12 +17,9 @@ import javax.swing.JOptionPane;
 public class panelprincipal extends javax.swing.JFrame {
 
     private CardLayout cardLayout;
-    
-    
 
     public panelprincipal() {
         initComponents();
-
         cardLayout = new CardLayout();
         contenido.setLayout(cardLayout);
 
@@ -31,12 +31,26 @@ public class panelprincipal extends javax.swing.JFrame {
 
         crearcuenta cr = new crearcuenta();
         contenido.add(cr, "crearCuentaPanel");
-
+        LoggedInpanel Lp=new LoggedInpanel();
+        contenido.add(Lp,"loggedinpanel");
         infoboton.setVisible(false);
         reportesboton.setVisible(false);
         empezarpartida.setVisible(false);
+        logoutboton.setVisible(false);
 
-        cardLayout.show(contenido, "defaultPanel");
+        Players loggedUser = Players.getCurrentLoggedUser();
+        if (loggedUser != null) {
+            displayUser.setText("USER: " + loggedUser.getUsername());
+            infoboton.setVisible(true);
+            reportesboton.setVisible(true);
+            empezarpartida.setVisible(true);
+            Salirboton.setVisible(false);
+            cardLayout.show(contenido, "loggedinpanel");
+
+        }else{
+            cardLayout.show(contenido, "defaultPanel");
+        }
+
     }
 
     /**
@@ -48,6 +62,7 @@ public class panelprincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jInternalFrame1 = new javax.swing.JInternalFrame();
         contenido = new javax.swing.JPanel();
         loginboton = new javax.swing.JButton();
         infoboton = new javax.swing.JButton();
@@ -56,6 +71,21 @@ public class panelprincipal extends javax.swing.JFrame {
         empezarpartida = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         displayUser = new javax.swing.JLabel();
+        Salirboton = new javax.swing.JButton();
+        logoutboton = new javax.swing.JButton();
+
+        jInternalFrame1.setVisible(true);
+
+        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
+        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
+        jInternalFrame1Layout.setHorizontalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jInternalFrame1Layout.setVerticalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(153, 153, 153));
@@ -72,7 +102,7 @@ public class panelprincipal extends javax.swing.JFrame {
         );
         contenidoLayout.setVerticalGroup(
             contenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 659, Short.MAX_VALUE)
         );
 
         loginboton.setText("LOGIN");
@@ -111,10 +141,23 @@ public class panelprincipal extends javax.swing.JFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Ajedrez Chino (Xianqui)");
+        jLabel1.setText("Ajedrez Chino (Xiangqi)");
 
         displayUser.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        displayUser.setText("USER: GUEST");
+
+        Salirboton.setText("SALIR");
+        Salirboton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirbotonActionPerformed(evt);
+            }
+        });
+
+        logoutboton.setText("LOGOUT");
+        logoutboton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutbotonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -122,17 +165,20 @@ public class panelprincipal extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(displayUser, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(infoboton, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(reportesboton, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(contenido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(Salirboton, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                    .addComponent(displayUser, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                    .addComponent(infoboton, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                    .addComponent(reportesboton, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(261, 261, 261)
-                        .addComponent(jLabel1)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(logoutboton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(contenido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -153,22 +199,26 @@ public class panelprincipal extends javax.swing.JFrame {
                         .addComponent(displayUser))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(crear_cuentaboton)
-                        .addComponent(loginboton)))
+                        .addComponent(loginboton)
+                        .addComponent(logoutboton)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(empezarpartida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(99, 99, 99)
-                .addComponent(infoboton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(reportesboton, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(395, Short.MAX_VALUE))
+                        .addGap(17, 17, 17))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(61, 61, 61)
+                                .addComponent(infoboton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(31, 31, 31)
+                                .addComponent(reportesboton, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Salirboton, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
 
         pack();
@@ -181,16 +231,21 @@ public class panelprincipal extends javax.swing.JFrame {
         Players loggedUser = Players.getCurrentLoggedUser();
         if (loggedUser != null) {
             displayUser.setText("USER: " + loggedUser.getUsername());
-            infoboton.setVisible(true); 
-            reportesboton.setVisible(true); 
+            infoboton.setVisible(true);
+            reportesboton.setVisible(true);
             empezarpartida.setVisible(true);
+            Salirboton.setVisible(false);
+            logoutboton.setVisible(true);
+            cardLayout.show(contenido, "loggedinpanel");
 
 
         } else {
-            displayUser.setText("USER: GUEST");
-            infoboton.setVisible(false); 
-            reportesboton.setVisible(false); 
+            displayUser.setText("");
+            Salirboton.setVisible(true);
+            infoboton.setVisible(false);
+            reportesboton.setVisible(false);
             empezarpartida.setVisible(false);
+            logoutboton.setVisible(false);
 
         }
     }
@@ -201,15 +256,21 @@ public class panelprincipal extends javax.swing.JFrame {
 
     private void reportesbotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportesbotonActionPerformed
         // TODO add your handling code here:
+        Players loggedUser = Players.getCurrentLoggedUser();
+        if (loggedUser != null) {
+            RANKINGORLOGS rl = new RANKINGORLOGS(this, contenido, cardLayout);
+            contenido.add(rl, "reportes");
+            cardLayout.show(contenido, "reportes");
+        }
     }//GEN-LAST:event_reportesbotonActionPerformed
 
     private void infobotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infobotonActionPerformed
         // TODO add your handling code here:
         Players loggedUser = Players.getCurrentLoggedUser();
         if (loggedUser != null) {
-            accountinfo info = new accountinfo(this,contenido, cardLayout);
+            accountinfo info = new accountinfo(this, contenido, cardLayout);
             contenido.add(info, "accountInfo");
-            cardLayout.show(contenido,"accountInfo");
+            cardLayout.show(contenido, "accountInfo");
 
         } else {
             JOptionPane.showMessageDialog(null, "DEBES HACER LOG IN ANTES!!");
@@ -218,12 +279,60 @@ public class panelprincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_infobotonActionPerformed
 
+
     private void empezarpartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_empezarpartidaActionPerformed
         // TODO add your handling code here:
-        TableroXiangqi tablero=new TableroXiangqi();
-        tablero.setVisible(true);
-        this.dispose();
+        Players loggedUser = Players.getCurrentLoggedUser();
+
+        List<Players> allUsers = Players.getAllPlayers();
+        List<String> userNames = new ArrayList<>();
+
+        for (Players user : allUsers) {
+            if (!user.getUsername().equals(loggedUser.getUsername())) {
+                userNames.add(user.getUsername());
+            }
+        }
+
+        if (userNames.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay otros usuarios disponibles para jugar.");
+            return;
+        }
+
+        String selectedOpponentName = (String) JOptionPane.showInputDialog(
+                this,
+                "Selecciona a tu oponente:",
+                "Elegir oponente",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                userNames.toArray(),
+                userNames.get(0)
+        );
+
+        if (selectedOpponentName != null) {
+            Players selectedOpponent = Players.getPlayerByName(selectedOpponentName);
+
+            TableroXiangqi tablero = new TableroXiangqi(loggedUser, selectedOpponent);
+            tablero.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_empezarpartidaActionPerformed
+
+    private void SalirbotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirbotonActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_SalirbotonActionPerformed
+
+    private void logoutbotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutbotonActionPerformed
+        // TODO add your handling code here:
+        Players loggedUser = Players.getCurrentLoggedUser();
+        Players.setCurrentLoggedUser(null);
+        loggedUser.logout();
+        loginSuccess(loggedUser);
+        JOptionPane.showMessageDialog(null, "Logout Exitoso");
+
+        cardLayout.show(contenido, "defaultPanel");
+
+    }//GEN-LAST:event_logoutbotonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,13 +378,16 @@ public class panelprincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Salirboton;
     public javax.swing.JPanel contenido;
     private javax.swing.JButton crear_cuentaboton;
     private javax.swing.JLabel displayUser;
     private javax.swing.JButton empezarpartida;
     private javax.swing.JButton infoboton;
+    private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loginboton;
+    private javax.swing.JButton logoutboton;
     private javax.swing.JButton reportesboton;
     // End of variables declaration//GEN-END:variables
 }

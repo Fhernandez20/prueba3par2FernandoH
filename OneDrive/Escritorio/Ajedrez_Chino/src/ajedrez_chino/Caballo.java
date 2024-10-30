@@ -4,6 +4,8 @@
  */
 package ajedrez_chino;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author fdhg0
@@ -32,4 +34,11 @@ public class Caballo extends Ficha {
         }
         return false;
     }
+    public ImageIcon obtenerIcono() {
+        String ruta = color.equals("Rojo") 
+            ? "/ajedrez_chino/imagenes/English-Horse-Red.png" 
+            : "/ajedrez_chino/imagenes/English-Horse-Black.png";
+        return new ImageIcon(getClass().getResource(ruta));
+    }
+    
 }

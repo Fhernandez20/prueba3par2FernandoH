@@ -126,33 +126,43 @@ public class login extends javax.swing.JPanel {
         String usertext = usernameText.getText();
         String passtext = passwordText.getText();
 
-        if (usertext.equals("") || passtext.equals("")) {
-            JOptionPane.showMessageDialog(null, "LLENA TODAS LAS CASILLAS");
-        } else {
-            boolean loginExitoso = false;
-
-            for (Players player : Players.getAllPlayers()) {
-                if (player.getUsername().equals(usertext) && player.validatepassword(passtext)) {
-                    if (Players.getCurrentLoggedUser() != null) {
-                        Players.getCurrentLoggedUser().logout();
-                    }
-
-                    Players.setCurrentLoggedUser(player);
-                    mainPanel.loginSuccess(player); 
-                    JOptionPane.showMessageDialog(null, "LOG IN EXITOSO!! BIENVENIDO " + player.getUsername());
-                    usernameText.setText("");
-                    passwordText.setText("");
-                    loginExitoso = true;
-                    break;
+        try {
+            if (usertext.equals("") || passtext.equals("")) {
+                JOptionPane.showMessageDialog(null, "LLENA TODAS LAS CASILLAS");
+            } else {
+                boolean loginExitoso = validateLogin(usertext, passtext, 0);
+                if (!loginExitoso) {
+                    JOptionPane.showMessageDialog(null, "NO EXISTE ESE USUARIO REVISE SUS CREDENCIALES!!");
                 }
             }
-
-            if (!loginExitoso) {
-                JOptionPane.showMessageDialog(null, "NO EXISTE ESE USUARIO REVISE SUS CREDENCIALES!!");
-            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ocurrió un error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_enterbotonActionPerformed
 
+
+    }//GEN-LAST:event_enterbotonActionPerformed
+    private boolean validateLogin(String usertext, String passtext, int index) {
+        if (index >= Players.getAllPlayers().size()) {
+            return false; 
+        }
+
+        Players player = Players.getAllPlayers().get(index);
+
+        if (player.getUsername().equals(usertext) && player.validatepassword(passtext)) {
+            if (Players.getCurrentLoggedUser() != null) {
+                Players.getCurrentLoggedUser().logout();
+            }
+
+            Players.setCurrentLoggedUser(player);
+            mainPanel.loginSuccess(player);
+            JOptionPane.showMessageDialog(null, "LOG IN EXITOSO!! BIENVENIDO " + player.getUsername());
+            usernameText.setText("");
+            passwordText.setText("");
+            return true;
+        }
+
+        return validateLogin(usertext, passtext, index + 1);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton enterboton;

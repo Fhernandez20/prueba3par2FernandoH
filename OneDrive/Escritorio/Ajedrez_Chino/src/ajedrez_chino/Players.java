@@ -19,6 +19,9 @@ public class Players {
     private String password;
     private boolean loggedIn;
     private Calendar time;
+    private String color;
+    private ArrayList<String> logs; 
+
 
     private static ArrayList<Players> allPlayers = new ArrayList<>();
 
@@ -28,8 +31,11 @@ public class Players {
         this.username = usuario;
         this.password = contraseña;
         this.loggedIn = false;
+        this.color = color; 
+
         this.wins = 0;
         this.time = Calendar.getInstance();
+        this.logs = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -52,9 +58,16 @@ public class Players {
     public int getWins() {
         return wins;
     }
+    
+    public String getColor() {
+        return color;
+    }
+    public void setColor(String Color){
+       this.color=Color;
+    }
 
     public void incrementWins() {
-        wins++;
+        wins+=3;
     }
 
     public static ArrayList<Players> getAllPlayers() {
@@ -103,5 +116,21 @@ public class Players {
             currentLoggedUser = null;
         }
     }
+    
+    public static Players getPlayerByName(String playerName) {
+        ArrayList<Players> allPlayers = getAllPlayers();
+        for (Players player : allPlayers) {
+            if (player.getUsername().equalsIgnoreCase(playerName)) {
+                return player;
+            }
+        }
+        return null;
+    }
 
+    public void addLog(String log) {
+        logs.add(log);
+    }
+     public ArrayList<String> getLogs() {
+        return logs;
+    }
 }

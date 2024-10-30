@@ -4,6 +4,8 @@
  */
 package ajedrez_chino;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author fdhg0
@@ -40,5 +42,13 @@ public class Rey extends Ficha {
 
         }
         return false;
+    }
+
+    @Override
+    public ImageIcon obtenerIcono() {
+        String ruta = color.equals("Rojo") 
+            ? "/ajedrez_chino/imagenes/English-King-Red.png" 
+            : "/ajedrez_chino/imagenes/English-King-Black.png";
+        return new ImageIcon(getClass().getResource(ruta));
     }
 }

@@ -5,7 +5,6 @@
 package ajedrez_chino;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -33,7 +32,7 @@ public class accountinfo extends javax.swing.JPanel {
         Players loggedUser = Players.getCurrentLoggedUser();
         if (loggedUser != null) {
             usernameText.setText("USERNAME: " + loggedUser.getUsername());
-            partidasGanadasText.setText("PARTIDAS GANADAS: " + loggedUser.getWins());
+            partidasGanadasText.setText("PUNTOS: " + loggedUser.getWins());
             fechaIngresotext.setText("FECHA DE INGRESO: " + loggedUser.getCalendar());
         } else {
             usernameText.setText("USERNAME: Not available");
@@ -61,6 +60,7 @@ public class accountinfo extends javax.swing.JPanel {
         setBackground(new java.awt.Color(51, 51, 51));
         setMaximumSize(new java.awt.Dimension(740, 550));
         setMinimumSize(new java.awt.Dimension(740, 550));
+        setPreferredSize(new java.awt.Dimension(740, 550));
 
         accountinfoText.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         accountinfoText.setForeground(new java.awt.Color(255, 255, 255));
@@ -74,7 +74,7 @@ public class accountinfo extends javax.swing.JPanel {
         partidasGanadasText.setBackground(new java.awt.Color(255, 255, 255));
         partidasGanadasText.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         partidasGanadasText.setForeground(new java.awt.Color(255, 255, 255));
-        partidasGanadasText.setText("PARTIDAS GANADAS:");
+        partidasGanadasText.setText("PUNTOS:");
 
         cambiarpasswordboton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cambiarpasswordboton.setText("CAMBIAR PASSWORD");
@@ -101,37 +101,37 @@ public class accountinfo extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(accountinfoText)
-                .addGap(296, 296, 296))
             .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
+                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(partidasGanadasText)
-                            .addComponent(usernameText)
-                            .addComponent(fechaIngresotext))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(cambiarpasswordboton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 260, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 303, Short.MAX_VALUE)
                         .addComponent(eliminarcuentaboton)
-                        .addGap(83, 83, 83))))
+                        .addGap(83, 83, 83))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(usernameText)
+                            .addComponent(partidasGanadasText)
+                            .addComponent(fechaIngresotext))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(306, 306, 306)
+                .addComponent(accountinfoText)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(38, 38, 38)
+                .addGap(37, 37, 37)
                 .addComponent(accountinfoText)
-                .addGap(61, 61, 61)
+                .addGap(60, 60, 60)
                 .addComponent(usernameText)
-                .addGap(52, 52, 52)
+                .addGap(54, 54, 54)
                 .addComponent(partidasGanadasText)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
                 .addComponent(fechaIngresotext)
-                .addGap(124, 124, 124)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cambiarpasswordboton)
                     .addComponent(eliminarcuentaboton))
