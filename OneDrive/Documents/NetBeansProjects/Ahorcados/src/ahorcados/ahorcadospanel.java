@@ -30,17 +30,21 @@ public class ahorcadospanel extends JFrame {
     public JPanel panelInicio;
     public JPanel panelFija;
     public JPanel panelRandom;
+    private JLabel palabraInvisibleFija;
+    private JLabel palabraInvisible;
     public CardLayout cardLayout;
 
+    private int palabraFija;
     private AdminPalabrasSecretas adminPalabras;
     private JuegoAhorcadoFijo juegoFijo;
     private JuegoAhorcadoAzar juegoAzar;
+    private String palabraActual;
 
     public ahorcadospanel() {
         this.setSize(500, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        adminPalabras = new AdminPalabrasSecretas();
         initiateComponents();
     }
 
@@ -68,9 +72,6 @@ public class ahorcadospanel extends JFrame {
 
         cardLayout.show(mainPanel, "Inicio");
 
-        //Instanciar Clases:
-        adminPalabras = new AdminPalabrasSecretas();
-
     }
 
     private void addPanels() {
@@ -97,12 +98,42 @@ public class ahorcadospanel extends JFrame {
         botonAdmin.setBounds(180, 200, 120, 40);
         panelInicio.add(botonAdmin);
 
+        //Jlabels
+        JLabel palabraLabelFija = new JLabel("Palabra Fija:");
+        palabraLabelFija.setBounds(50, 320, 200, 30);
+        palabraLabelFija.setForeground(Color.BLACK);
+        panelFija.add(palabraLabelFija);
+
+        JLabel palabraLabelRandom = new JLabel("Palabra Aleatoria:");
+        palabraLabelRandom.setBounds(50, 320, 200, 30);
+        palabraLabelRandom.setForeground(Color.WHITE);
+        panelRandom.add(palabraLabelRandom);
+
+        palabraInvisibleFija = new JLabel("AAAAAAAAAAAAAAAAAA");
+        palabraInvisibleFija.setBounds(50, 180, 300, 40);
+        palabraInvisibleFija.setForeground(Color.BLACK);
+        palabraInvisibleFija.setFont(new Font("Arial", Font.BOLD, 24));
+        panelFija.add(palabraInvisibleFija);
+
+        palabraInvisible = new JLabel("AAAAAAAAAAAAAAAAA");
+        palabraInvisible.setBounds(50, 180, 300, 40);
+        palabraInvisible.setForeground(Color.WHITE);
+        palabraInvisible.setFont(new Font("Arial", Font.BOLD, 24));
+        panelRandom.add(palabraInvisible);
+
         botonFija.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String palabraSecreta = JOptionPane.showInputDialog(null, "Ingresa la palabra secreta:");
                 if (palabraSecreta != null && !palabraSecreta.trim().isEmpty()) {
+
                     juegoFijo = new JuegoAhorcadoFijo(palabraSecreta);
+
+                    palabraFija = palabraSecreta.length();
+                    juegoFijo.inicializarPalabraSecreta();
+                    String palabraActual = juegoFijo.getPalabraActual();
+                    palabraInvisibleFija.setText(palabraActual);
+
                     cardLayout.show(mainPanel, "Fija");
                 }
             }
@@ -111,7 +142,13 @@ public class ahorcadospanel extends JFrame {
         botonRandom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Juego con palabra aleatoria iniciado.");
+                String palabraSecreta = adminPalabras.obtenerPalabraAleatoria();
+                juegoFijo = new JuegoAhorcadoFijo(palabraSecreta);
+
+                palabraFija = palabraSecreta.length();
+                juegoFijo.inicializarPalabraSecreta();
+                String palabraActual = juegoFijo.getPalabraActual();
+                palabraInvisible.setText(palabraActual);
                 cardLayout.show(mainPanel, "Random");
             }
         });
@@ -148,25 +185,36 @@ public class ahorcadospanel extends JFrame {
         panelFija.add(registrarPalabraFija);
 
         registrarPalabraFija.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                String letra = ingresarLetraFija.getText().trim();
-                if (letra.length() == 1) {
-                    letra = letra.toUpperCase();
-                    if (juegoFijo.verificarLetra(letra.charAt(0))) {
-                        System.out.println("Letra correcta: " + letra);
+                String textoIngresado = ingresarLetraFija.getText().trim();
+                if (textoIngresado.length() == 1) {
+                    char letra = textoIngresado.toUpperCase().charAt(0);
+                    if (juegoFijo.verificarLetra(letra)) {
+                        JOptionPane.showMessageDialog(null,"Letra correcta: " + letra);
+
+                        palabraInvisibleFija.setText(juegoFijo.getPalabraActual());
+                        ingresarLetraFija.setText(null);
+
                     } else {
-                        System.out.println("Letra incorrecta: " + letra);
+                        JOptionPane.showMessageDialog(null,"Letra incorrecta: " + letra);
+                        ingresarLetraFija.setText(null);
                     }
 
                     if (juegoFijo.hasGanado()) {
                         JOptionPane.showMessageDialog(null, "¡Has ganado! La palabra es: " + juegoFijo.getPalabraSecreta());
+                        cardLayout.show(mainPanel, "Inicio");
+                    }
+                    if (juegoFijo.getIntentos() == 0) {
+                        JOptionPane.showMessageDialog(null, "¡Se Agotaron Tus Intentos! La palabra es: " + juegoFijo.getPalabraSecreta());
+                        cardLayout.show(mainPanel, "Inicio");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "INGRESE SOLO UN CHARACTER");
+                    JOptionPane.showMessageDialog(null, "INGRESE SOLO UN CARÁCTER");
                 }
+
             }
+
         });
 
         JButton registrarPalabraRandom = new JButton("INSERTAR");
@@ -174,57 +222,36 @@ public class ahorcadospanel extends JFrame {
         panelRandom.add(registrarPalabraRandom);
 
         registrarPalabraRandom.addActionListener(new ActionListener() {
-            @Override
+            @Override //Boton aceptar letra
             public void actionPerformed(ActionEvent e) {
-                String letra = registrarPalabraRandom.getText().trim().toUpperCase(); // Obtener la letra y convertir a mayúsculas
-                if (letra.length() == 1) {
-                    if (!letra.isEmpty()) {
-                        System.out.println("Letra ingresada: " + letra);
+                String textoIngresado = ingresarLetraRandom.getText().trim();
+                if (textoIngresado.length() == 1) {
+                    char letra = textoIngresado.toUpperCase().charAt(0);
+                    if (juegoFijo.verificarLetra(letra)) {
+                        JOptionPane.showMessageDialog(null,"Letra correcta: " + letra);
 
-                        // Aquí puedes usar la letra ingresada para jugar
-                        // Por ejemplo, puedes verificar si está en la palabra secreta
-                        // Suponiendo que deseas registrar la letra en el juego de ahorcado
-                        if (juegoAzar.verificarLetra(letra.charAt(0))) {
-                            System.out.println("Letra correcta: " + letra);
-                        } else {
-                            System.out.println("Letra incorrecta: " + letra);
-                        }
-
-                        // Verificar si ha ganado
-                        if (juegoAzar.hasGanado()) {
-                        }
+                        palabraInvisible.setText(juegoFijo.getPalabraActual());
+                        ingresarLetraRandom.setText(null);
                     } else {
-                        JOptionPane.showMessageDialog(null, "NO HA INGRESADO NADA");
+                        JOptionPane.showMessageDialog(null,"Letra incorrecta: " + letra);
+                        ingresarLetraRandom.setText(null);
+                    }
+
+                    if (juegoFijo.hasGanado()) {
+                        JOptionPane.showMessageDialog(null, "¡Has ganado! La palabra es: " + juegoFijo.getPalabraSecreta());
+                        cardLayout.show(mainPanel, "Inicio");
+                    }
+                    if (juegoFijo.getIntentos() == 0) {
+                        JOptionPane.showMessageDialog(null, "¡Se Agotaron Tus Intentos! La palabra es: " + juegoFijo.getPalabraSecreta());
+                        cardLayout.show(mainPanel, "Inicio");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "INGRESE SOLO UN CHARACTER");
+                    JOptionPane.showMessageDialog(null, "INGRESE SOLO UN CARÁCTER");
                 }
 
             }
         });
 
-        //Jlabels
-        JLabel palabraLabelFija = new JLabel("Palabra Fija:");
-        palabraLabelFija.setBounds(50, 320, 200, 30);
-        palabraLabelFija.setForeground(Color.BLACK);
-        panelFija.add(palabraLabelFija);
-
-        JLabel palabraLabelRandom = new JLabel("Palabra Aleatoria:");
-        palabraLabelRandom.setBounds(50, 320, 200, 30);
-        palabraLabelRandom.setForeground(Color.WHITE);
-        panelRandom.add(palabraLabelRandom);
-
-        JLabel palabraInvisibleFija = new JLabel("AAAAAAAAAAAAAAAAA");
-        palabraInvisibleFija.setBounds(50, 180, 300, 40);
-        palabraInvisibleFija.setForeground(Color.BLACK);
-        palabraInvisibleFija.setFont(new Font("Arial", Font.BOLD, 24));
-        panelFija.add(palabraInvisibleFija);
-
-        JLabel palabraInvisible = new JLabel("AAAAAAAAAAAAAAAAA");
-        palabraInvisible.setBounds(50, 180, 300, 40);
-        palabraInvisible.setForeground(Color.WHITE);
-        palabraInvisible.setFont(new Font("Arial", Font.BOLD, 24));
-        panelRandom.add(palabraInvisible);
     }
 
 }

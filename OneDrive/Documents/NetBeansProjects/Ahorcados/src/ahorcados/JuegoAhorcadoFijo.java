@@ -9,18 +9,16 @@ package ahorcados;
  * @author josue
  */
 public class JuegoAhorcadoFijo extends JuegoAhorcadoBase {
-    
-    
+
     public JuegoAhorcadoFijo(String palabraSecreta) {
         this.palabraSecreta = palabraSecreta.toUpperCase();
         inicializarPalabraSecreta();
     }
-    
-    
-    public String getPalabraSecreta(){
+
+    public String getPalabraSecreta() {
         return palabraSecreta;
     }
-    
+
     @Override
     public void inicializarPalabraSecreta() {
         palabraActual = new StringBuilder("_".repeat(palabraSecreta.length()));
@@ -45,15 +43,23 @@ public class JuegoAhorcadoFijo extends JuegoAhorcadoBase {
             return false;
         }
     }
-    
+
+    public String getPalabraActual() {
+        return palabraActual.toString();
+    }
+
     @Override
     protected boolean hasGanado() {
         return palabraActual.toString().equals(palabraSecreta);
     }
 
+    public int getIntentos() {
+        return intentos;
+    }
+
     @Override
     public void jugar() {
+
     }
-    
-    
+
 }
